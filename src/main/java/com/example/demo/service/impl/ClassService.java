@@ -5,7 +5,7 @@ import com.example.demo.model.Student;
 import com.example.demo.repository.IClassRepo;
 import com.example.demo.repository.impl.ClassRepo;
 import com.example.demo.service.IClassService;
-import org.springframework.boot.context.config.ResourceNotFoundException;
+import com.example.demo.utils.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,14 +27,18 @@ public class ClassService implements IClassService {
     @Override
     public Class update(Class c) {
         if (classRepo.read(c.getCode()) == null) {
-            //throw new ResourceNotFoundException("", "");
+            throw new ResourceNotFoundException(String.format("Class with code %s not found", c.getCode()));
         }
         return classRepo.update(c);
     }
 
     @Override
     public Class read(String code) {
-        return classRepo.read(code);
+        Class c = classRepo.read(code);
+        if (c == null) {
+            throw new ResourceNotFoundException(String.format("Class with code %s not found", code));
+        }
+        return c;
     }
 
     @Override

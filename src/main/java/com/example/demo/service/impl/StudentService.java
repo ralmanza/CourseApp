@@ -7,6 +7,7 @@ import com.example.demo.repository.IStudentRepo;
 import com.example.demo.repository.impl.ClassRepo;
 import com.example.demo.repository.impl.StudentRepo;
 import com.example.demo.service.IStudentService;
+import com.example.demo.utils.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,11 +31,18 @@ public class StudentService implements IStudentService {
 
     @Override
     public Student update(Student student) {
+        if (studentRepo.read(student.getId()) == null) {
+            throw new ResourceNotFoundException(String.format("Student with id %d not found", student.getId()));
+        }
         return studentRepo.update(student);
     }
 
     @Override
     public Student read(Integer id) {
+        Student student  = studentRepo.read(id);
+        if (student == null) {
+            throw new ResourceNotFoundException(String.format("Student with id %d not found", id));
+        }
         return studentRepo.read(id);
     }
 
